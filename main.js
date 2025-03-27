@@ -50,7 +50,7 @@ let catMove = false;
 let catDelay = 1000; // wait 1000 miliseconds
 let catMovementStarted = false;
 let catStartTime = null;
-let catDistance = 1400; // distance to move the cat
+let catDistance = window.innerWidth + 128; // distance to move the cat, adjusted based on window width
 
 let scene2 = false;
 
@@ -120,7 +120,7 @@ function update(timestamp) {
 
     // Move the cat to its new position with the updated label
     document.querySelector('.catLabel').textContent = "Press space to select :3";
-    catDistance = window.innerWidth-670;
+    catDistance = window.innerWidth/2-64;
     
     yesButton.style.display = 'block';
     

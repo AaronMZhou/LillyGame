@@ -6,16 +6,26 @@ export function initGame() {
   function spawnTrees() {
     const treePositions = [
       { x: 0, y: height-255 },
-      { x: 100, y: height-200 },
-      { x: 350, y: height-177 },
-      { x: 600, y: height-190 },
-      { x: 850, y: height-205 },
+
       { x: 225, y: height-260 },
       { x: 475, y: height-255 },
       { x: 725, y: height-265 },
       { x: 1025, y: height-265 },
+      { x: 1275, y: height-260 },
+
+
+      { x: 100, y: height-200 },
+      { x: 350, y: height-177 },
+      { x: 600, y: height-190 },
+      { x: 850, y: height-205 },
+      { x: 1125, y: height-205 },
+      { x: 1375, y: height-200 },
+
+
+
 
       //top trees
+      { x: 0, y: -180 },
       { x: 100, y: -110 },
       { x: 200, y: -150 },
       { x: 350, y: -105 },
@@ -24,6 +34,9 @@ export function initGame() {
       { x: 600, y: -120 },
       { x: 750, y: -175 },
       { x: 900, y: -125 },
+      { x: 1050, y: -175 },
+      { x: 1200, y: -125 },
+      { x: 1300, y: -195 },
     ];
     
     const gameScreen = document.getElementById('game-screen');
