@@ -31,7 +31,7 @@ const lillyCharacter = new Lilly(lillyElement);
 
 // Cat movement variables
 let catX = 200;
-const step = 3; // pixels per frame for cat movement
+const step = 5; // pixels per frame for cat movement
 
 // Listen for the Lilly selection click to start the game
 document.getElementById('select-lilly').addEventListener('click', () => {
