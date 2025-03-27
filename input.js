@@ -3,14 +3,12 @@ export const keys = {
   ArrowDown: false,
   ArrowLeft: false,
   ArrowRight: false,
-  " ": false,
+  " ": false,  // if you choose to use " " as key identifier
+  Space: false // or use this property with e.code === "Space"
 };
 
 export function initInputListeners() {
-  // Detect if the user is on a mobile device
-  const isMobile = () => /Mobi|Android/i.test(navigator.userAgent);
-
-  // Keydown events for keyboard controls
+  // Keyboard listeners remain the same
   document.addEventListener('keydown', (e) => {
     if (e.code === "Space") {
       keys.Space = true;
@@ -18,7 +16,7 @@ export function initInputListeners() {
       keys[e.key] = true;
     }
   });
-
+  
   document.addEventListener('keyup', (e) => {
     if (e.code === "Space") {
       keys.Space = false;
@@ -29,53 +27,60 @@ export function initInputListeners() {
   });
 
   // Mobile touch controls
+  const isMobile = () => /Mobi|Android/i.test(navigator.userAgent);
+  
   if (isMobile()) {
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    // Detect touch start
+    let touchStartX = 0, touchStartY = 0;
+    
     document.addEventListener('touchstart', (e) => {
-      // Get the initial touch position
+      // Record the initial touch position
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
     });
-
-    // Detect touch move or end (swipe detection)
+    
     document.addEventListener('touchend', (e) => {
       const touchEndX = e.changedTouches[0].clientX;
       const touchEndY = e.changedTouches[0].clientY;
-
-      // Check swipe direction (left, right, up, down)
-      const horizontalSwipe = touchEndX - touchStartX;
-      const verticalSwipe = touchEndY - touchStartY;
-
-      if (Math.abs(horizontalSwipe) > Math.abs(verticalSwipe)) {
-        // Horizontal swipe: Left or Right
-        if (horizontalSwipe > 0) {
-          keys.ArrowRight = true;  // Move right
-          keys.ArrowLeft = false;
-        } else {
-          keys.ArrowLeft = true;   // Move left
-          keys.ArrowRight = false;
-        }
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const tapThreshold = 10; // If the movement is less than 10px, treat as a tap
+      
+      if (distance < tapThreshold) {
+        // It's a tap—simulate space key press
+        keys.Space = true;
+        setTimeout(() => {
+          keys.Space = false;
+        }, 100);
       } else {
-        // Vertical swipe: Up or Down
-        if (verticalSwipe > 0) {
-          keys.ArrowDown = true;  // Move down
-          keys.ArrowUp = false;
+        // Otherwise, handle swipe for arrow keys.
+        if (Math.abs(dx) > Math.abs(dy)) {
+          // Horizontal swipe
+          if (dx > 0) {
+            keys.ArrowRight = true;
+            keys.ArrowLeft = false;
+          } else {
+            keys.ArrowLeft = true;
+            keys.ArrowRight = false;
+          }
         } else {
-          keys.ArrowUp = true;    // Move up
-          keys.ArrowDown = false;
+          // Vertical swipe
+          if (dy > 0) {
+            keys.ArrowDown = true;
+            keys.ArrowUp = false;
+          } else {
+            keys.ArrowUp = true;
+            keys.ArrowDown = false;
+          }
         }
+        // Reset arrow keys after a short delay
+        setTimeout(() => {
+          keys.ArrowUp = false;
+          keys.ArrowDown = false;
+          keys.ArrowLeft = false;
+          keys.ArrowRight = false;
+        }, 250);
       }
-
-      // Reset key states after the swipe
-      setTimeout(() => {
-        keys.ArrowUp = false;
-        keys.ArrowDown = false;
-        keys.ArrowLeft = false;
-        keys.ArrowRight = false;
-      }, 250);  // Reset after a short delay (250ms)
     });
   }
 }
