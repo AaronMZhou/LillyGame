@@ -1,0 +1,179 @@
+.press-start-2p-regular {
+  font-family: "Press Start 2P", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+/* Reset margins and ensure full-height screens */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Container for selection screen elements */
+.select-container {
+  text-align: center;
+}
+
+/* Start Screen Styles */
+#start-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #E6F0DC;
+}
+
+.character-box {
+  width: 128px;        /* Bigger box */
+  height: 128px;       /* Bigger box */
+  background-image: url('sprites/lillySprites.png');
+  background-color: #C1E899;
+  /* Display the first sprite (top-left) scaled up to 128x128 */
+  background-position: 0 0;
+  margin-left: auto;
+  margin-right: auto;
+  /* Scale the entire sheet to double size so that one cell (64x64) becomes 128x128 */
+  background-size: 640px 512px;
+  border: 6px solid #333;
+  cursor: pointer;
+  transition: transform 0.2s, border-width 0.2s;
+  position: relative; /* For the inner label positioning */
+}
+
+.character-box:hover {
+  transform: scale(1.2);
+  border-width: 8px;
+}
+
+/* Label inside the character box */
+.character-label {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0);
+  font-weight: bold;
+  font-size: 14px;
+  font-family: "Press Start 2P", system-ui;
+}
+.label {
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0);
+  font-weight: bold;
+  font-size: 32px;
+  font-family: "Press Start 2P", system-ui;
+  display: none;
+}
+
+/* Game Screen Styles */
+#game-screen {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: url('sprites/grassTile.png');
+  background-repeat: repeat;
+}
+
+#beGirlfriend { /*proll not gonna use and make everything on same screen*/
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Moveable Lilly Sprite on Game Screen */
+#lilly {
+  width: 128px;
+  height: 128px;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  z-index: 6;
+  background-image: url('sprites/lillySprites.png');
+  background-position: 0 0; /* Starting with the first frame (down walking animation) */
+  background-size: 640px 512px;
+}
+
+#cat {
+  width: 128px;
+  height: 128px;
+  position: absolute;
+  top: 200px;
+  left: 200px;
+  z-index: 5;
+  background-image: url('sprites/cat.png');
+  background-position: 0 0; /* Starting with the first frame (down walking animation) */
+  background-size: 128px 256px;
+}
+
+.tree {
+  image-rendering: pixelated;
+  width: 256px;
+  height: 256px;
+  position: absolute;
+  background-image: url('sprites/tree.png');
+  background-position: 0 0;
+  background-size: 256px 512px;
+}
+
+
+h2 {
+  font-family: "Press Start 2P", system-ui;
+}
+
+.catLabel {
+  position: absolute;
+  bottom: 100px;
+  right: 20;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0);
+  font-weight: bold;
+  font-size: 14px;
+  font-family: "Press Start 2P", system-ui;
+}
+
+#yesButton, #noButton {
+  width: 128px;
+  height: 128px;
+   /* Assuming the sprite sheet is 128x1280px */
+  position: absolute;
+  z-index: 3;
+}
+
+#yesButton {
+  left: calc(40% - 64px);
+  top: calc(50% - 64px);
+  background-image: url('sprites/YesButton.png');
+  background-size: 128px 896px;
+  background-position: 0px 0px; /* First frame of Yes button */
+  display: none;
+}
+
+#noButton {
+  left: calc(60% - 64px);
+  top: calc(50% - 64px);
+  background-image: url('sprites/NoButton.png');
+  background-size: 128px 1280px;
+  background-position: 0px 0px; /* First frame of No button */
+  display: none;
+}
+
+/*.active-button {
+  /* A thin dotted border with pink dots *//*
+  border: 3px solid;
+  border-image: repeating-radial-gradient(circle, #FFB6C1 0, #FFB6C1 4px, transparent 4px, transparent 10px) 1;
+  
+  /* Rounded corners for a softer look */
+  /*border-radius: 12px;
+  
+} */
+
