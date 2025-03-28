@@ -1,4 +1,4 @@
-import { keys, initInputListeners, isMobile } from './input.js';
+import { keys, initInputListeners } from './input.js';
 import { Lilly } from './lilly.js';
 import { initGame } from './trees.js';
 
@@ -25,6 +25,7 @@ const yesButtony = yesButton.style.top;
 const noButtonx = noButton.style.left;
 const noButtony = noButton.style.top;
 const controls = document.getElementById('controls');
+const isMobile = () => /Mobi|Android/i.test(navigator.userAgent); // Detect mobile devices
 
 
 // Create an instance of the Lilly character
@@ -48,6 +49,7 @@ document.getElementById('select-lilly').addEventListener('click', () => {
   
   //DISPLAYS HOW TO USE CONTROLS--------------------------
   //sets correct control instructions
+  
   if (isMobile()) {
     document.querySelector('.frontLabel').textContent = "Swipe to move";
   }
