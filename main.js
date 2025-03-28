@@ -1,4 +1,4 @@
-import { keys, initInputListeners } from './input.js';
+import { keys, initInputListeners, isMobile } from './input.js';
 import { Lilly } from './lilly.js';
 import { initGame } from './trees.js';
 
@@ -47,7 +47,10 @@ document.getElementById('select-lilly').addEventListener('click', () => {
   catSound.play();
   
   //DISPLAYS HOW TO USE CONTROLS--------------------------
-
+  //sets correct control instructions
+  if (isMobile()) {
+    document.querySelector('.frontLabel').textContent = "Swipe to move";
+  }
   //display controls for 2 seconds
   controls.style.transition = 'transform 0.5s ease-in-out';
   setInterval(()=>{
