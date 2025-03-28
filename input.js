@@ -5,6 +5,14 @@ export const keys = {
   ArrowRight: false,
   " ": false,  // or use this for the space key
   Space: false, // for e.code === "Space"
+
+  // potential code for other player
+
+  w: false,
+  a: false,
+  s: false,
+  d: false,
+  e: false //action key, like space bar for Lilly
 };
 
 export function initInputListeners() {
@@ -25,7 +33,7 @@ export function initInputListeners() {
     }
     if (keys.hasOwnProperty(e.key)) {
       keys[e.key] = false;
-    }
+}   AbortController
   });
 
   // Mobile touch controls

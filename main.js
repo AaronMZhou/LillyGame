@@ -24,6 +24,7 @@ const yesButtonx = yesButton.style.left;
 const yesButtony = yesButton.style.top;
 const noButtonx = noButton.style.left;
 const noButtony = noButton.style.top;
+const controls = document.getElementById('controls');
 
 
 // Create an instance of the Lilly character
@@ -38,10 +39,31 @@ document.getElementById('select-lilly').addEventListener('click', () => {
   document.getElementById('start-screen').style.display = 'none';
   gameScreen.style.display = 'block';
   gameStarted = true;
+
+
   
   //START THE MUSIC WOOO
   mamerico.play();
   catSound.play();
+  
+  //DISPLAYS HOW TO USE CONTROLS--------------------------
+  //sets correct control instructions
+  if (isMobile()) {
+    document.querySelector('.frontLabel').textContent = "Swipe to move";
+  }
+  //display controls for 2 seconds
+  controls.style.transition = 'transform 0.5s ease-in-out';
+  setInterval(()=>{
+    controls.style.transform = 'scale(1.2)';
+    setTimeout(()=>{
+      controls.style.transform = 'scale(1)';
+    },500);
+  },1000);
+  setTimeout(()=>{
+    controls.style.display = 'none';
+    //make controls grow and shrink
+    
+  }, 4000);
   
 });
 
@@ -119,7 +141,11 @@ function update(timestamp) {
     console.log("scene2");
 
     // Move the cat to its new position with the updated label
-    document.querySelector('.catLabel').textContent = "Press space to select :3";
+    if (isMobile()) {
+      document.querySelector('.catLabel').textContent = "Tap screen :3";
+    } else {
+      document.querySelector('.catLabel').textContent = "Press space :3";
+    }
     catDistance = window.innerWidth/2-64;
     
     yesButton.style.display = 'block';
