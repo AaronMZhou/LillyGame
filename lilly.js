@@ -23,7 +23,7 @@ export class Lilly {
       }
       
       // Movement logic:
-      const step = 4;
+      const step = 3;
       const spriteHeight = 128;
       if (keys.ArrowUp && this.y - step >= 50) {
         this.y -= step;

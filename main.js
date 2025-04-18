@@ -1,6 +1,8 @@
+
 import { keys, initInputListeners } from './input.js';
 import { Lilly } from './lilly.js';
 import { initGame } from './trees.js';
+import { spawnEnemies } from './alligators.js';
 
 // Initialize input listeners
 initInputListeners();
@@ -9,7 +11,6 @@ initInputListeners();
 const catSound = new Audio('sounds/catMeow.mp3');
 const mamerico = new Audio('sounds/mamerico.mp3');
 const boom = new Audio('sounds/boom.mp3');
-
 
 // Game state variables
 let gameStarted = false;
@@ -25,23 +26,25 @@ const yesButtony = yesButton.style.top;
 const noButtonx = noButton.style.left;
 const noButtony = noButton.style.top;
 const controls = document.getElementById('controls');
+const catLabel = document.querySelector('.catLabel');
 const isMobile = () => /Mobi|Android/i.test(navigator.userAgent); // Detect mobile devices
 
+//store current scene
+let curScene = 1; //start at 1, so we can use switch statements to change scenes
 
 // Create an instance of the Lilly character
 const lillyCharacter = new Lilly(lillyElement);
 
 // Cat movement variables
 let catX = 200;
-const step = 5; // pixels per frame for cat movement
+const step = 3; // pixels per frame for cat movement
 
 // Listen for the Lilly selection click to start the game
 document.getElementById('select-lilly').addEventListener('click', () => {
+
   document.getElementById('start-screen').style.display = 'none';
   gameScreen.style.display = 'block';
   gameStarted = true;
-
-
   
   //START THE MUSIC WOOO
   mamerico.play();
@@ -53,6 +56,7 @@ document.getElementById('select-lilly').addEventListener('click', () => {
   if (isMobile()) {
     document.querySelector('.frontLabel').textContent = "Swipe to move";
   }
+
   //display controls for 2 seconds
   controls.style.transition = 'transform 0.5s ease-in-out';
   setInterval(()=>{
@@ -63,8 +67,6 @@ document.getElementById('select-lilly').addEventListener('click', () => {
   },1000);
   setTimeout(()=>{
     controls.style.display = 'none';
-    //make controls grow and shrink
-    
   }, 4000);
   
 });
@@ -79,6 +81,7 @@ let catDistance = window.innerWidth + 128; // distance to move the cat, adjusted
 let scene2 = false;
 
 function update(timestamp) {
+
   // Animate trees
   const treeFrameIndex = Math.floor(timestamp / 500) % 2;
   const trees = document.querySelectorAll('.tree');
@@ -127,7 +130,11 @@ function update(timestamp) {
     // Transition to the new screen
     // Hide elements from the game screen that are not needed
     
-    gameScreen.style.backgroundImage = "url('sprites/pastelTile.png')";
+
+    //THIS CAN WORK FOR ALLL SCENES, MOVE CAT AND LILLY, INCREASE INT SCENE TRACKER --------
+    curScene++;
+    console.log(curScene); //test curScene goes up once
+    changeScene(curScene); //change background
 
     const treesContainer = document.querySelectorAll('.tree');
     treesContainer.forEach(tree => {
@@ -139,54 +146,67 @@ function update(timestamp) {
     catX = 100;
     cat.style.left = catX + 'px';
     
-    scene2 = true;
-    console.log("scene2");
 
+        //this is what I could potentially do to make it more scalable
+    //however this is small game, so I can handle swtich statements/nested ifelse in here for scene changes
+    // updateCatMessage(curScene); //takes in current scene and updates message based on scene
+    //updateCatMessage(curScene); //takes in current scene and updates message based on scene
     // Move the cat to its new position with the updated label
     if (isMobile()) {
-      document.querySelector('.catLabel').textContent = "Tap screen :3";
+      if (curScene == 2) {
+        catLabel.textContent = "Tap screen to attack!";
+      }
+      else {
+        catLabel.textContent = "Tap screen :3";
+      }
+      
     } else {
-      document.querySelector('.catLabel').textContent = "Press space :3";
+      if (curScene == 2) {
+        catLabel.textContent = "Press space to attack!";
+      }
+      else {
+        catLabel.textContent = "Press space :3";
+      }
     }
-    catDistance = window.innerWidth/2-64;
+    if (curScene == 2) { //cat off screen
+      catDistance = window.innerWidth+64;
+      catLabel.style.color = 'white';
+      spawnEnemies(); //spawn alligators
+      //not best practice as I use this exact same code in next scene prompting to go right
+      document.querySelector('.label').textContent = "BEAT THE ENEMIES!";
+      label.style.display = 'block';
+      //change label color to white
+      label.style.color = 'white';
+
+
+    }
+    else if (curScene == 3) { //cat between buttons, buttons appear
+      console.log("scene 3");
+      catLabel.style.color = 'black';
+      document.querySelector('.label').textContent = "Will you be my girlfriend?";
+      catDistance = window.innerWidth/2-64;
+      const alligators = document.querySelectorAll('.alligator');
+      alligators.forEach(alligator => {
+        alligator.remove(); // Remove each alligator from the DOM
+      });
+      yesButton.style.display = 'block';
     
-    yesButton.style.display = 'block';
+      noButton.style.display = 'block';
+      
+      label.style.display = 'block';
+    }
+    console.log(curScene); //test curScene goes up once
     
-    noButton.style.display = 'block';
-    
-    label.style.display = 'block';
+
     
     
   }
-  if (scene2) { //once scene2 starts (button selection)
-    console.log("checking buttons");
-    if (checkYes()) {
-      
-      yesButton.classList.add("active-button"); //just for testing collision
-      //console.log("yes"); //test if button is working
-      if (keys.Space) { //looks into input.js for space key in keys class and sees if true (pressed down)
-        catSound.play();
-        animateYes();
-      }
-    }
-    else {
-      yesButton.classList.remove("active-button");
-    }
-    if (checkNo()) {
-      
-      //console.log("no"); //test if button is working
-      noButton.classList.add("active-button");
-      
-      if (keys.Space) { //looks into input.js for space key in keys class and sees if true (pressed down)
-        catSound.play();
-        animateNo();
-        
-      }
-      
-    }
-    else {
-      noButton.classList.remove("active-button");
-    }
+  if (curScene == 2) { //once scene2 starts (button selection)
+
+    scene2Run(timestamp);
+  }
+  else if (curScene == 3) { //once scene3 starts (button selection)
+    scene3Run();
   }
 
   updateZIndex();
@@ -298,6 +318,143 @@ function animateNo() {
       
     }
   }, 100); // 250ms between each frame
+
+}
+
+function changeScene(scene) {
+  const backgrounds = [
+    'url(sprites/grassTile.png)', //not best practice, but this is a small game. This is just placeholder
+    //placeholder was so this could become element 1 so it would match with scene 1 logic in code
+    'url(sprites/grassTile.png)',
+    'url(sprites/dungeonTile.png)',
+    'url(sprites/pastelTile.png)',
+    'url(sprites/scene4.png)'
+  ];
+
+  // Set the background image based on the current scene
+  gameScreen.style.backgroundImage = backgrounds[scene];
+  
+  // Hide the yes and no buttons when transitioning to a new scene
+  //need to fix later, if I have a bunch of scenes then there will be no need to check if I neve use again
+  yesButton.style.display = 'none';
+  noButton.style.display = 'none';
+  label.style.display = 'none';
+}
+
+function scene2Run(timestamp) {
+  if (keys.Space) { //looks into input.js for space key in keys class and sees if true (pressed down)
+    //
+  }
+  let alligatorMove = false;
+  const alligatorFrameIndex = Math.floor(timestamp / 500) % 2;
+  if (alligatorFrameIndex == 1) {
+    alligatorMove = true;
+  }
+  const alligators = document.querySelectorAll('.alligator');
+  alligators.forEach(alligator => {
+    alligator.style.backgroundPosition = `0px -${alligatorFrameIndex * 65}px`;
+    const x = parseInt(alligator.style.left);
+    const y = parseInt(alligator.style.top);
+
+    //TIME TO MOVE THEM BABIES ATTACKKKKKK, lets make them step toward the left 
+
+    //similar code to cat movement but for alligators
+    
+    /*
+    if (alligatorMove) {
+      
+      if (lillyCharacter.x+64 > x) {
+        alligator.style.left = (x) + 2 + 'px'; //move left by 2 pixels 
+      }
+      else if (lillyCharacter.x < x) {
+        alligator.style.left = (x) - 2 + 'px'; //move right by 2 pixels 
+      }
+      if (lillyCharacter.y+64 > y) {
+        alligator.style.top = (y) + 2 + 'px'; //move down by 2 pixels 
+      }
+      else if (lillyCharacter.y < y) {
+        alligator.style.top = (y) - 2 + 'px'; //move up by 2 pixels 
+      }
+      
+
+    }*/
+      if (alligatorMove) {
+        // parse or track your current alligator position
+        let x = parseInt(alligator.style.left, 10);
+        let y = parseInt(alligator.style.top, 10);
+      
+        // target position: you may want to aim at Lilly's center
+        const targetX = lillyCharacter.x;
+        const targetY = lillyCharacter.y;
+      
+        // 1. vector from alligator → Lilly
+        const dx = targetX - x;
+        const dy = targetY - y;
+      
+        // 2. compute distance
+        const dist = Math.hypot(dx, dy); // same as sqrt(dx*dx + dy*dy)
+      
+        if (dist > 0) {
+          const speed = 2; // pixels per frame
+      
+          // 3. normalize and scale
+          const vx = (dx / dist) * speed;
+          const vy = (dy / dist) * speed;
+      
+          // 4. apply movement
+          x += vx;
+          y += vy;
+      
+          alligator.style.left = `${x}px`;
+          alligator.style.top  = `${y}px`;
+        }
+      }
+
+  });
+}
+
+function scene3Run() {
+  console.log("checking buttons");
+  label.style.color = 'black';
+  
+
+  if (checkYes()) {
+    
+    yesButton.classList.add("active-button"); //just for testing collision
+    //console.log("yes"); //test if button is working
+    if (keys.Space) { //looks into input.js for space key in keys class and sees if true (pressed down)
+      catSound.play();
+      animateYes();
+      document.querySelector('.label').textContent = "Continue to the right!";
+      const label = document.getElementById('label');
+      setInterval(()=>{
+        label.style.transform = 'scale(1.2)';
+        setTimeout(()=>{
+          label.style.transform = 'scale(1)';
+        },500);
+      },1000);
+    }
+    
+  }
+  else {
+    yesButton.classList.remove("active-button");
+  }
+
+  if (checkNo()) {
+    
+    //console.log("no"); //test if button is working
+    noButton.classList.add("active-button");
+    if (keys.Space) { //looks into input.js for space key in keys class and sees if true (pressed down)
+      catSound.play();
+      animateNo();
+      
+    }
+    
+  }
+
+  else {
+    noButton.classList.remove("active-button");
+  }
 
 }
 

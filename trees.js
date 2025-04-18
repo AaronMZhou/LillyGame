@@ -1,5 +1,6 @@
 export function initGame() {
     spawnTrees();
+    //this is expandable for different spawns 
   }
   
   let height = window.innerHeight;
