@@ -359,34 +359,51 @@ function scene2Run(timestamp) {
   }
   let alligatorMove = false;
   const alligatorFrameIndex = Math.floor(timestamp / 500) % 2;
+  
   if (alligatorFrameIndex == 1) {
     alligatorMove = true;
   }
   const alligators = document.querySelectorAll('.alligator');
   alligators.forEach(alligator => {
-    alligator.style.backgroundPosition = `0px -${alligatorFrameIndex * 65}px`;
+
+    let alligatorDirection = 0; //0 is left, 1 is right
+
+
+
     const x = parseInt(alligator.style.left);
     const y = parseInt(alligator.style.top);
 
+    if (lillyCharacter.x > x) {
+      alligatorDirection = 1;
+    }
+
     //TIME TO MOVE THEM BABIES ATTACKKKKKK, lets make them step toward the left 
 
-    //similar code to cat movement but for alligators
+    //similar code to cat movement but for alligators //nvm I think I changed
     
-    
+    //handle frame after finding where its moving
+    //HOLY SHIT I SPENT SO LONG ON THIS STUPID PROBLEM I WAS LIKE WHY IS ALLIGATORFRAMEINDEX ALWAYS EQUAL TO 1 WHEN I PUT IT IN THE ALLIGATOR MOVE IF STATEMENT AND ITS CUZ IT HAS TO BE 1 FOR THE IF STATEMENT TO ACTIVATE
+    console.log(alligatorFrameIndex);
+    alligator.style.backgroundPosition = `-${128*alligatorFrameIndex}px -${alligatorDirection * 128}px`;
+
     if (alligatorMove) {
       let aliStep = 1;
-      if (lillyCharacter.x+64 > x) {
-        alligator.style.left = (x) + aliStep + 'px'; //move left by 2 pixels 
+      if (lillyCharacter.x+64 > x) { //alligator to left
+        alligator.style.left = (x) + aliStep + 'px'; //move left by aliStep
+        alligatorDirection = 1;
       }
-      else if (lillyCharacter.x < x) {
-        alligator.style.left = (x) - aliStep + 'px'; //move right by 2 pixels 
+      else if (lillyCharacter.x+64 < x) { //alligator to the right 
+        alligator.style.left = (x) - aliStep + 'px'; //move right by aliStep
+        alligatorDirection = 0;
       }
-      if (lillyCharacter.y+64 > y) {
-        alligator.style.top = (y) + aliStep + 'px'; //move down by 2 pixels 
+      if (lillyCharacter.y > y) { //alligator above
+        alligator.style.top = (y) + aliStep + 'px'; //move down by aliStep
       }
-      else if (lillyCharacter.y < y) {
-        alligator.style.top = (y) - aliStep + 'px'; //move up by 2 pixels 
+      else if (lillyCharacter.y < y) { //alligaor below
+        alligator.style.top = (y) - aliStep + 'px'; //move up by aliStep
       }
+
+      
       
 
     } /*
@@ -534,7 +551,10 @@ function checkAlligatorCollisions() {
     // Check if any alligator is within the bounds of Lilly's hand
     if (alligatorX < handX + 128 && alligatorX + 64 > handX &&
         alligatorY < handY + 128 && alligatorY + 64 > handY) {
-      alligator.remove(); // Remove the alligator if it collides with the hand
+      setTimeout(()=>{// trying to time it so alligator dies when hand clamps down
+        alligator.remove(); // Remove the alligator if it collides with the hand
+      },1000)
+
     }
   });
 }

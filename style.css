@@ -152,12 +152,12 @@ html, body {
 
 .alligator {
   image-rendering: pixelated;
-  width: 64px;
-  height: 64px;
+  width: 128px;
+  height: 128px;
   position: absolute;
   background-image: url('sprites/alligator.png');
   background-position: 0 0;
-  background-size: 64px 128px;
+  background-size: 256px 256px;
 }
 
 
