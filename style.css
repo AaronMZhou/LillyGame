@@ -177,6 +177,19 @@ h2 {
   font-size: 14px;
   font-family: "Press Start 2P", system-ui;
 }
+.lillyLabel {
+  position: absolute;
+  bottom: 100px;
+  right: 20;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0);
+  font-weight: bold;
+  font-size: 24px;
+  font-family: "Press Start 2P", system-ui;
+  color: white;
+  display: none;
+}
 
 #yesButton, #noButton {
   width: 128px;
@@ -203,6 +216,18 @@ h2 {
   background-position: 0px 0px; /* First frame of No button */
   display: none;
 }
+/* Lilly's Hand Attack Animation Styles */
+#lillyHand {
+  position: absolute;
+  width: 128px;  /* Total width of 4 frames, each 128px */
+  height: 128px; /* Height of a single frame */
+  background-image: url('sprites/lillyHand.png'); /* Sprite sheet for the hand */
+  background-size: 512px 128px; /* 4 frames horizontally */
+  display: none; /* Initially hidden */
+  z-index: 20; /* Ensures it appears above other elements */
+  pointer-events: none; /* Prevents interaction with other elements during the attack */
+}
+
 
 /*.active-button {
   /* A thin dotted border with pink dots *//*
