@@ -46,6 +46,10 @@ let handFrameIndex = 0;
 let handAnimationInProgress = false;
 let handElement = document.getElementById('lillyHand');
 
+let aliStep = 1;
+window.canGoRight = true;
+
+let rightRestrict = false;
 document.getElementById('select-lilly').addEventListener('click', () => {
 
   document.getElementById('start-screen').style.display = 'none';
@@ -162,7 +166,7 @@ function update(timestamp) {
       if (curScene == 2) {
         catLabel.textContent = "Tap screen to attack!";
       }
-      else {
+      else if (curScene == 3){
         catLabel.textContent = "Tap screen :3";
       }
       
@@ -170,14 +174,19 @@ function update(timestamp) {
       if (curScene == 2) {
         catLabel.textContent = "Press space to attack!";
       }
-      else {
+      else if (curScene == 3){
         catLabel.textContent = "Press space :3";
       }
     }
+    
     if (curScene == 2) { //cat off screen
+      rightRestrict = true;
       catDistance = window.innerWidth+64;
       catLabel.style.color = 'white';
-      spawnEnemies(); //spawn alligators
+
+      // ORIGINALLY USED TO SPAWN MOB OF ALLIGATORS, WILL SAVE FOR LATER
+      //spawnEnemies(); //spawn alligators
+
       //not best practice as I use this exact same code in next scene prompting to go right
       document.querySelector('.label').textContent = "BEAT THE ENEMIES!";
       label.style.display = 'block';
@@ -185,9 +194,15 @@ function update(timestamp) {
       label.style.color = 'white';
       
       //START SPAWNING THE ALLIGATORS ONE BY ONE
-      for (let i = 0; i < 5; i++) { //REALLY did not need to use for loop, just havent used on this project
+      for (let i = 0; i < 8; i++) { //REALLY did not need to use for loop, just havent used on this project
         setTimeout(()=>spawnAlligator(),2000*i);
       }
+      setTimeout(()=>{
+        aliStep = 2; //increase speed
+        spawnEnemies(); //MOBBBB
+        document.querySelector('.label').textContent = "Now go right!";
+        rightRestrict = false; //allow right movement
+      }, 16000)
 
 
     }
@@ -345,11 +360,20 @@ function changeScene(scene) {
   // Set the background image based on the current scene
   gameScreen.style.backgroundImage = backgrounds[scene];
   
+
   // Hide the yes and no buttons when transitioning to a new scene
   //need to fix later, if I have a bunch of scenes then there will be no need to check if I neve use again
   yesButton.style.display = 'none';
   noButton.style.display = 'none';
   label.style.display = 'none';
+
+  if (scene == 4) {
+
+    //make background image fit screen
+    gameScreen.style.backgroundSize = 'cover';
+    gameScreen.style.backgroundPosition = 'center';
+    catLabel.textContent = "YIPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE!";
+  }
 }
 
 function scene2Run(timestamp) {
@@ -357,6 +381,18 @@ function scene2Run(timestamp) {
     //
     triggerLillyAttack();
   }
+
+  //handles seeing if lilly can go right
+  if (rightRestrict) {
+    if (lillyCharacter.x > window.innerWidth - 200 ) {
+      window.canGoRight = false; //disallow lilly to move right
+    }
+    else {
+      window.canGoRight = true; //allow lilly to move right
+    }
+  } 
+
+
   let alligatorMove = false;
   const alligatorFrameIndex = Math.floor(timestamp / 500) % 2;
   
@@ -372,7 +408,20 @@ function scene2Run(timestamp) {
 
     const x = parseInt(alligator.style.left);
     const y = parseInt(alligator.style.top);
+/*
+    const lillyX = lillyCharacter.x+64;
+    const lillyY = lillyCharacter.y;
 
+    const dx = lillyX - x;
+    const dy = lillyY - y;
+
+    const dist = Math.hypot(dx, dy); // same as sqrt(dx*dx + dy*dy)
+
+    let aliStep = 1;
+    const stepX = (dx / dist) * aliStep;
+    const stepY = (dy / dist) * aliStep;
+    //console.log(stepX, stepY);
+*/
     if (lillyCharacter.x > x) {
       alligatorDirection = 1;
     }
@@ -387,58 +436,22 @@ function scene2Run(timestamp) {
     alligator.style.backgroundPosition = `-${128*alligatorFrameIndex}px -${alligatorDirection * 128}px`;
 
     if (alligatorMove) {
-      let aliStep = 1;
+      
       if (lillyCharacter.x+64 > x) { //alligator to left
-        alligator.style.left = (x) + aliStep + 'px'; //move left by aliStep
+        alligator.style.left = (x + aliStep) + 'px'; //move left by aliStep
         alligatorDirection = 1;
       }
       else if (lillyCharacter.x+64 < x) { //alligator to the right 
-        alligator.style.left = (x) - aliStep + 'px'; //move right by aliStep
+        alligator.style.left = (x - aliStep) + 'px'; //move right by aliStep
         alligatorDirection = 0;
       }
       if (lillyCharacter.y > y) { //alligator above
-        alligator.style.top = (y) + aliStep + 'px'; //move down by aliStep
+        alligator.style.top = (y + aliStep) + 'px'; //move down by aliStep
       }
       else if (lillyCharacter.y < y) { //alligaor below
-        alligator.style.top = (y) - aliStep + 'px'; //move up by aliStep
+        alligator.style.top = (y - aliStep) + 'px'; //move up by aliStep
       }
-
-      
-      
-
-    } /*
-      if (alligatorMove) {
-        // parse or track your current alligator position
-        let x = parseInt(alligator.style.left, 10);
-        let y = parseInt(alligator.style.top, 10);
-      
-        // target position: you may want to aim at Lilly's center
-        const targetX = lillyCharacter.x;
-        const targetY = lillyCharacter.y;
-      
-        // 1. vector from alligator → Lilly
-        const dx = targetX - x;
-        const dy = targetY - y;
-      
-        // 2. compute distance
-        const dist = Math.hypot(dx, dy); // same as sqrt(dx*dx + dy*dy)
-      
-        if (dist > 0) {
-          const speed = 1; // pixels per frame
-      
-          // 3. normalize and scale
-          const vx = (dx / dist) * speed;
-          const vy = (dy / dist) * speed;
-      
-          // 4. apply movement
-          x += vx;
-          y += vy;
-      
-          alligator.style.left = `${x}px`;
-          alligator.style.top  = `${y}px`;
-        }
-      }
-        */
+    } 
 
   });
 }
@@ -449,8 +462,8 @@ function spawnAlligator() {
   gameScreen.appendChild(alligator);
   
   // Set the initial position of the alligator
-  alligator.style.left = `${window.innerWidth}px`;
-  alligator.style.top = `${Math.random() * 200 + 100}px`; // Random vertical position
+  alligator.style.left = `${window.innerWidth - 200}px`;
+  alligator.style.top = `${Math.random() * window.innerHeight}px`; // Random vertical position within window height
   
   // Add any additional styles or animation for the alligator here
 }
@@ -540,21 +553,23 @@ function triggerLillyAttack() {
 
 // Function to check for collisions with alligators
 function checkAlligatorCollisions() {
-  const alligators = document.querySelectorAll('.alligator');
-  alligators.forEach(alligator => {
-    const alligatorX = parseInt(alligator.style.left, 10);
-    const alligatorY = parseInt(alligator.style.top, 10);
+  setTimeout(()=>{ //FIXED: Now alligator collision is based on last frame of hand animation (clamping down) rather than first frame
+    const alligators = document.querySelectorAll('.alligator');
+    alligators.forEach(alligator => {
+      const alligatorX = parseInt(alligator.style.left, 10);
+      const alligatorY = parseInt(alligator.style.top, 10);
 
-    const handX = parseInt(handElement.style.left, 10);
-    const handY = parseInt(handElement.style.top, 10);
+      const handX = parseInt(handElement.style.left, 10);
+      const handY = parseInt(handElement.style.top, 10);
 
-    // Check if any alligator is within the bounds of Lilly's hand
-    if (alligatorX < handX + 128 && alligatorX + 64 > handX &&
-        alligatorY < handY + 128 && alligatorY + 64 > handY) {
-      setTimeout(()=>{// trying to time it so alligator dies when hand clamps down
-        alligator.remove(); // Remove the alligator if it collides with the hand
-      },1000)
+      // Check if any alligator is within the bounds of Lilly's hand
+      if (alligatorX < handX + 128 && alligatorX + 64 > handX &&
+          alligatorY < handY + 128 && alligatorY + 64 > handY) {
+      //  setTimeout(()=>{// trying to time it so alligator dies when hand clamps down //THIS WAS SO STUPID
+          alligator.remove(); // Remove the alligator if it collides with the hand
+       // },1000)
 
-    }
-  });
+      }
+    });
+  },1000);
 }

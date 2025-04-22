@@ -37,7 +37,7 @@ export class Lilly {
         this.x -= step;
         this.currentDirection = 'ArrowLeft';
       }
-      if (keys.ArrowRight) {
+      if (keys.ArrowRight && window.canGoRight) {
         this.x += step;
         this.currentDirection = 'ArrowRight';
         
